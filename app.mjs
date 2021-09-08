@@ -1,9 +1,7 @@
-//https://fantasy.espn.com/apis/v3/games/ffl/seasons/2021/segments/0/leagues/72628823?view=mMatchup&view=mMatchupScore&scoringPeriodId=1
 import axios from 'axios';
 import fs from 'fs';
-import nodemailer from 'nodemailer'
 import {groupBy} from './appHelper.mjs'
-//let transporter = nodemailer.createTransport(transport[defaults]);
+
 const week = 1;
 let reportName = 'week'+ week + 'injuryReport.html';
 let urlBase ='https://fantasy.espn.com/apis/v3/games/ffl/seasons/2021/segments/0/leagues/72628823?view=mMatchup&view=mMatchupScore&scoringPeriodId=';
