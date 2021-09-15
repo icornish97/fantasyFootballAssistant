@@ -31,7 +31,8 @@ const lineupSlotIdByPositionName = [{lineupSlotId : "0", positionName : "Quarter
                                     {lineupSlotId : "16", positionName : "D/ST"},
                                     {lineupSlotId : "17", positionName : "Kicker"},
                                     {lineupSlotId : "20", positionName : "Bench"},
-                                    {lineupSlotId : "23", positionName : "Flex"}];
+                                    {lineupSlotId : "23", positionName : "Flex"}, 
+                                    {lineupSlotId : "21", positionName : "IR"}];
 
 async function compileHtmlOutput(){ return axios.get(url).then(async (res)=> 
 {   
@@ -63,7 +64,7 @@ async function compileHtmlOutput(){ return axios.get(url).then(async (res)=>
         });
 
         const getOutStartingPlayers = playersOnFantasyRosters.filter(player => player.position != "Bench" && player.position != "D/ST" && player.injuryStatus != "ACTIVE" && player.injuryStatus != "QUESTIONABLE");
-        const getInactiveStartingPlayers = playersOnFantasyRosters.filter(player => player.position != "Bench" && player.position != "D/ST" && player.injuryStatus != "ACTIVE");
+        const getInactiveStartingPlayers = playersOnFantasyRosters.filter(player => player.position != "Bench" && player.position != "IR" && player.position != "D/ST" && player.injuryStatus != "ACTIVE" && player.injuryStatus != "INJURY_RESERVE");
         const getQuestionableStartingPlayers = playersOnFantasyRosters.filter(player => player.position != "Bench" && player.position != "D/ST" && player.injuryStatus == "QUESTIONABLE");
         
         const startingPlayersWithStatusByOwner = new Map([...groupBy(getInactiveStartingPlayers, player => player.ownerName).entries()].sort()); 
