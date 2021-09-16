@@ -3,7 +3,7 @@
 ## Purpose
 This project is used to automate the creation of an injury report for ESPN fantasy football leagues. 
 
-![Sample Injury Report](https://drive.google.com/file/d/10vM_5Hh8YRSdj_S75xqdczoh_OaCgu9N/view?usp=sharing)
+![Sample Injury Report](https://ibb.co/6JTH7tt)
 
 ## Prerequisites
 ### AWS Version
