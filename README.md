@@ -9,4 +9,4 @@ This project is used to automate the creation of an injury report for ESPN fanta
 
 ### AWS Version
 
-### Node Version
+### Terminal Version
