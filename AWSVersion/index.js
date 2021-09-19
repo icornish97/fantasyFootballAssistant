@@ -1,7 +1,7 @@
 let axios = require('axios');
 let weekConfig = require('./weekConfig.js');
 let injuryReportGenerator = require('./injuryReport');
-let AWS = require('aws-sdk');
+let emailer = require('./emailer');
 let settings = require('./settings');
 
 
@@ -17,23 +17,8 @@ async function compileHtmlOutput(){ return axios.get(url).then(async (res)=>
 return htmlOutput;}    
 );
     };
-let injuryReport = compileHtmlOutput().then(async (htmlOutput)=>{
-    var ses = new AWS.SES({region : "us-east-2"});
-    var params = {
-         Destination: {
-              ToAddresses: ['ian.cornish1@gmail.com'],
-            },
-            Message: {
-              Body: {
-                Html: { Data:htmlOutput},
-              },
-        
-              Subject: { Data: "Week " + week + " Injury Report" },
-            },
-            Source: "ian.cornish1@gmail.com",
-
-        };
-    return ses.sendEmail(params).promise();
+let report = compileHtmlOutput().then(async (htmlOutput)=>{
+    return emailer(htmlOutput, week);
 });
-return injuryReport;
+return report;
 };
