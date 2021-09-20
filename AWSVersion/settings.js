@@ -2,6 +2,9 @@ let leagueId = '72628823';
 let week1Start = new Date('September 7, 2021');
 let week1End = new Date('September 13, 2021');
 let seasonId = '2021';
+let awsRegion = 'us-east-2';
+let reportToEmail = 'ian.cornish1@gmail.com';
+let reportFromEmail = 'ian.cornish1@gmail.com';
 const teamIdByOwner = [{teamId : "1", teamOwner : "Ian Cornish"},
                        {teamId : "2", teamOwner : "Richard Stubing"},
                        {teamId : "3", teamOwner : "Donnie Reynolds"},
@@ -27,5 +30,8 @@ exports.week1End = week1End;
 exports.week1Start = week1Start;
 exports.leagueId = leagueId;
 exports.seasonId = seasonId;
+exports.awsRegion = awsRegion;
+exports.reportToEmail = reportToEmail;
+exports.reportFromEmail = reportFromEmail;
 exports.teamIdByOwner = teamIdByOwner;
 exports.lineupSlotIdByPositionName = lineupSlotIdByPositionName;
