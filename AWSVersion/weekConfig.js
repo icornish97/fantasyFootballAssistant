@@ -32,6 +32,8 @@ let today = new Date();
 today.setDate(dd);
 today.setMonth(mm);
 today.setYear(yyyy);
+today.setHours(0,0,0,0);
+
 
 let scoringPeriods = getScoringPeriodsForSeason(settings.week1Start, settings.week1End);
 
