@@ -47,13 +47,17 @@ module.exports = async function getMatchupHistoryData(data, week){
         let previousMatchups = await getPreviousMatchups(data);
         let currentYearMatchups = getCurrentSeasonResults(data);
         let matchupHistory = previousMatchups.concat(currentYearMatchups);
+        let leagueMatchupHistory=[];
         for(i of currentWeekMatchups){
+            let vsMatchupHistory=[];
             console.log('Matchup '+utils.getOwnerNameByTeamID(i.home) +' VS '+utils.getOwnerNameByTeamID(i.away));
             let history = matchupHistory.filter(history => (history.winningTeam.teamId==i.home || history.losingTeam.teamId==i.home)&&(history.winningTeam.teamId==i.away || history.losingTeam.teamId==i.away));
                 for(let teamId in i){
-                    console.log(ownerMatchupSummary(i[teamId], history));
+                    vsMatchupHistory.push(ownerMatchupSummary(i[teamId], history));
                 }
+            leagueMatchupHistory.push(vsMatchupHistory);
         }
+        return leagueMatchupHistory;
     }
     function ownerMatchupSummary(teamId, history){
         let totalMatches = history.length;
