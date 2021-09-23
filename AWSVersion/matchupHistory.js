@@ -50,7 +50,6 @@ module.exports = async function getMatchupHistoryData(data, week){
         let leagueMatchupHistory=[];
         for(i of currentWeekMatchups){
             let vsMatchupHistory=[];
-            console.log('Matchup '+utils.getOwnerNameByTeamID(i.home) +' VS '+utils.getOwnerNameByTeamID(i.away));
             let history = matchupHistory.filter(history => (history.winningTeam.teamId==i.home || history.losingTeam.teamId==i.home)&&(history.winningTeam.teamId==i.away || history.losingTeam.teamId==i.away));
                 for(let teamId in i){
                     vsMatchupHistory.push(ownerMatchupSummary(i[teamId], history));
@@ -62,18 +61,35 @@ module.exports = async function getMatchupHistoryData(data, week){
     function ownerMatchupSummary(teamId, history){
         let totalMatches = history.length;
         let wins=0;
+        let losses=0;
         let points=0;
         for(let i =0; i<totalMatches;i++){
             if(history[i].winningTeam.teamId==teamId){
                 wins += history[i].winningTeam.win;
                 points += history[i].winningTeam.points;
             }else if(history[i].losingTeam.teamId==teamId){
-                wins += history[i].losingTeam.win;
+                losses ++;
                 points += history[i].losingTeam.points;
             }
         }
-        return {teamId:teamId, ownerName:utils.getOwnerNameByTeamID(teamId),totalWins:wins,totalPoints:points};
+        return {teamId:teamId, ownerName:utils.getOwnerNameByTeamID(teamId),totalWins:wins,totalLosses:losses,totalPoints:points};
     }
-    return  getMatchupRecordsForCurrentWeek();
+    async function generateHTML(){
+        let data = await getMatchupRecordsForCurrentWeek();
+        let htmlOutput = '<!DOCTYPE html> <html><style> #matchupHistory { font-family: Arial, Helvetica, sans-serif; border-collapse: collapse;} #matchupHistory td, #matchupHistory th { border: 1px }</style> <body> <table id="matchupHistory"> <tr> <td style="text-align: center;background-color: #04AA6D;color: white;" colspan = "7"><b>Week  ' + week + ' Matchup History (All Time)</b></td> </tr><th style="text-align:center;padding-right:5px;padding-left:5px">Home</th><th style="text-align:center;padding-right:5px;padding-left:5px">Record</th><th style="text-align:center;padding-right:5px;padding-left:5px">Points</th><th></th><th>Away</th><th style="text-align:center;padding-right:5px;padding-left:5px">Record</th><th style="text-align:center;padding-right:5px;padding-left:5px">Points</th>' ;
+        let iterator = 0;
+        for(i of data){
+            iterator++;
+            if(iterator%2 == 0){
+                htmlOutput = htmlOutput.concat('<tr><td>'+i[0].ownerName+'</td><td style="text-align:center">('+i[0].totalWins+'-'+i[0].totalLosses+')</td><td>'+i[0].totalPoints+'</td><td style="padding:5px">vs</td><td>'+i[1].ownerName+'</td><td style="text-align:center">('+i[1].totalWins+'-'+i[1].totalLosses+')</td><td>'+i[1].totalPoints+'</td></tr>');
+
+            }else{
+                htmlOutput = htmlOutput.concat('<tr style="background-color:#ddd"><td>'+i[0].ownerName+'</td><td style="text-align:center">('+i[0].totalWins+'-'+i[0].totalLosses+')</td><td>'+i[0].totalPoints+'</td><td style="padding:5px">vs</td><td>'+i[1].ownerName+'</td><td style="text-align:center">('+i[1].totalWins+'-'+i[1].totalLosses+')</td><td>'+i[1].totalPoints+'</td></tr>');
+            }
+        }
+        htmlOutput = htmlOutput.concat(' </table> </body> </html>');
+        return htmlOutput;
+    }
+    return  await generateHTML();
     
 }
