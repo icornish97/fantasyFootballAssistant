@@ -1,6 +1,7 @@
 let settings = require('./settings');
+let utils = require('./utils');
 
-module.exports = function generateInjuryReport(responseTeams, week){
+module.exports = async function generateInjuryReport(responseTeams, week){
 let teamRosters = [];
         for(let i of responseTeams){
             teamRosters.push(i.roster);
@@ -17,7 +18,7 @@ let teamRosters = [];
             let positionNameValue = settings.lineupSlotIdByPositionName.filter(position => position.lineupSlotId == entry.lineupSlotId);
 
             return{playerFullName : entry.playerPoolEntry.player.fullName,
-                   ownerName : ownerNameValue[0].teamOwner,
+                   ownerName : utils.getOwnerNameByTeamID(entry.playerPoolEntry.onTeamId),
                    injuryStatus : entry.playerPoolEntry.player.injuryStatus,
                    position : positionNameValue[0].positionName,
                    playerId : entry.playerId,
@@ -29,7 +30,7 @@ let teamRosters = [];
         const getInactiveStartingPlayers = playersOnFantasyRosters.filter(player => player.position != "Bench" && player.position != "IR" && player.position != "D/ST" && player.injuryStatus != "ACTIVE" && player.injuryStatus != "INJURY_RESERVE");
         
         const startingPlayersWithStatusByOwner = new Map([...groupBy(getInactiveStartingPlayers, player => player.ownerName).entries()].sort()); 
-        var htmlOutput = '<!DOCTYPE html> <html><style> #players { font-family: Arial, Helvetica, sans-serif; border-collapse: collapse;} #players td, #players th { border: 1px }</style> <body> <table id="players"> <tr> <td style="text-align: center;background-color: #04AA6D;color: white;" colspan = "3"><b>Week  ' + week + ' Injury Report</b></td> </tr> ';
+        var htmlOutput = '<style> #players { font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; margin-left:auto; margin-right:auto;} #players td, #players th { border: 1px }</style> <table id="players"> <tr> <td style="text-align: center;background-color: #04AA6D;color: white;" colspan = "3"><b>Week  ' + week + ' Injury Report</b></td> </tr> ';
 
         for(let [key, value] of startingPlayersWithStatusByOwner){
             htmlOutput = htmlOutput.concat('<tr style="background-color: #ddd !important"> <td colspan = "5"> <b>' +key+ '</b> </td> </tr>')
@@ -46,7 +47,7 @@ let teamRosters = [];
                 htmlOutput= htmlOutput.concat(' </tr> ');
             }
         }
-        htmlOutput = htmlOutput.concat(' </table> </body> </html>');
+        htmlOutput = htmlOutput.concat(' </table> ');
         return htmlOutput;
     }
 
