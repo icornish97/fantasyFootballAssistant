@@ -10,7 +10,7 @@ var params = {
             Html: { Data:htmlOutput},
           },
     
-          Subject: { Data: "Week " + week + " Injury Report" },
+          Subject: { Data: "Week " + week + " FF Report" },
         },
         Source: settings.reportFromEmail,
 
