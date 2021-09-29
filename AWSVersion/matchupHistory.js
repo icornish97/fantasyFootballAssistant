@@ -76,7 +76,7 @@ module.exports = async function getMatchupHistoryData(data, week){
     }
     async function generateHTML(){
         let data = await getMatchupRecordsForCurrentWeek();
-        let htmlOutput = '<!DOCTYPE html> <html><style> #matchupHistory { font-family: Arial, Helvetica, sans-serif; border-collapse: collapse;} #matchupHistory td, #matchupHistory th { border: 1px }</style> <body> <table id="matchupHistory"> <tr> <td style="text-align: center;background-color: #04AA6D;color: white;" colspan = "7"><b>Week  ' + week + ' Matchup History (All Time)</b></td> </tr><th style="text-align:center;padding-right:5px;padding-left:5px">Home</th><th style="text-align:center;padding-right:5px;padding-left:5px">Record</th><th style="text-align:center;padding-right:5px;padding-left:5px">Points</th><th></th><th>Away</th><th style="text-align:center;padding-right:5px;padding-left:5px">Record</th><th style="text-align:center;padding-right:5px;padding-left:5px">Points</th>' ;
+        let htmlOutput = '<style> #matchupHistory { font-family: Arial, Helvetica, sans-serif; border-collapse: collapse;margin-left:auto; margin-right:auto;} #matchupHistory td, #matchupHistory th { border: 1px }</style> <body> <table id="matchupHistory"> <tr> <td style="text-align: center;background-color: #04AA6D;color: white;" colspan = "7"><b>Week  ' + week + ' Matchup History (All Time)</b></td> </tr><th style="text-align:center;padding-right:5px;padding-left:5px">Home</th><th style="text-align:center;padding-right:5px;padding-left:5px">Record</th><th style="text-align:center;padding-right:5px;padding-left:5px">Points</th><th></th><th>Away</th><th style="text-align:center;padding-right:5px;padding-left:5px">Record</th><th style="text-align:center;padding-right:5px;padding-left:5px">Points</th>' ;
         let iterator = 0;
         for(i of data){
             iterator++;
@@ -87,7 +87,7 @@ module.exports = async function getMatchupHistoryData(data, week){
                 htmlOutput = htmlOutput.concat('<tr style="background-color:#ddd"><td>'+i[0].ownerName+'</td><td style="text-align:center">('+i[0].totalWins+'-'+i[0].totalLosses+')</td><td>'+i[0].totalPoints+'</td><td style="padding:5px">vs</td><td>'+i[1].ownerName+'</td><td style="text-align:center">('+i[1].totalWins+'-'+i[1].totalLosses+')</td><td>'+i[1].totalPoints+'</td></tr>');
             }
         }
-        htmlOutput = htmlOutput.concat(' </table> </body> </html>');
+        htmlOutput = htmlOutput.concat(' </table> ');
         return htmlOutput;
     }
     return  await generateHTML();
