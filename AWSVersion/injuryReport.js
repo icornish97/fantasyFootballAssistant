@@ -2,16 +2,7 @@ let settings = require('./settings');
 let utils = require('./utils');
 
 module.exports = async function generateInjuryReport(responseTeams, week){
-let teamRosters = [];
-        for(let i of responseTeams){
-            teamRosters.push(i.roster);
-        }
-        let listOfRosterEntries = [];
-        for(let j of teamRosters){
-            for(let l = 0; l< j.entries.length; l++){
-                listOfRosterEntries.push(j.entries[l]);
-            }
-        }
+    let listOfRosterEntries = utils.getListOfPlayers(responseTeams);
         const playersOnFantasyRosters = listOfRosterEntries.map(entry => {
 
             let ownerNameValue = settings.teamIdByOwner.filter(team => team.teamId == entry.playerPoolEntry.onTeamId);
