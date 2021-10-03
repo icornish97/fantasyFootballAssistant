@@ -5,7 +5,7 @@ let utils = require('./utils');
 module.exports = async function getMatchupHistoryData(data, week){
     
     function getCurrentMatchups(data, week){
-        return data.schedule.filter(match => match.matchupPeriodId == week).map(matchup => {
+        return data.schedule.filter(match => match.matchupPeriodId == data.status.currentMatchupPeriod).map(matchup => {
             return {home:matchup.home.teamId, away:matchup.away.teamId};
         });
     }
