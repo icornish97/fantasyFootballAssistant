@@ -11,25 +11,7 @@ module.exports = async function getMatchupHistoryData(data, week){
     }
 
     function getCurrentSeasonResults(data){
-        return data.schedule.filter(match => match.winner!="UNDECIDED").map(match=>decideWinner(match,settings.seasonId))
-    }
-
-    function decideWinner(matchup, season){
-        let match;
-        if(matchup.winner == 'HOME'){
-            match = {
-                winningTeam  : {teamId:matchup.home.teamId,ownerName:utils.getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,win:1},
-                losingTeam : {teamId:matchup.away.teamId,ownerName:utils.getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,win:0},
-                season:season
-                }
-        }else if(matchup.winner == "AWAY"){
-            match = {
-                winningTeam : {teamId:matchup.away.teamId,ownerName:utils.getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,win:1},
-                losingTeam : {teamId:matchup.home.teamId,ownerName:utils.getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,win:0},
-                season:season
-            }
-        }
-        return match;
+        return data.schedule.filter(match => match.winner!="UNDECIDED").map(match=>utils.decideWinner(match,settings.seasonId))
     }
     
     async function getPreviousMatchups(data){
@@ -37,7 +19,7 @@ module.exports = async function getMatchupHistoryData(data, week){
     let previousMatchups = [];
     for(i of previousSeasons){
         let response = await axios.get(i.url);
-        previousMatchups = response.data[0].schedule.map(matchup => {return decideWinner(matchup, i.year);});
+        previousMatchups = response.data[0].schedule.map(matchup => {return utils.decideWinner(matchup, i.year);});
     }
     return previousMatchups;
     }
