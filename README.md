@@ -2,8 +2,23 @@
 
 ## Purpose
 This project is used as a reporting service for ESPN fantasy football leagues. 
+
+### Previous Week Recap
+
+This report compiles results from last week's matchups. 
+
 ![Sample Recap](./recap.png)
+
+### Matchup Preview
+
+This report displays all time head to head records for the current week's matchups.
+
 ![Sample Matchup Preview](./matchupHistory.png)
+
+### Injury Report
+
+This report displays all players currently in starting lineups with an injury designation 
+
 ![Sample Injury Report](./injuryReportRedacted.PNG)
 
 ## Prerequisites
