@@ -13,7 +13,10 @@ module.exports = async function recapPriorWeek(data, week){
     for(i of priorGames){
         even++;
         if(even % 2 == 0 ){
-            if(high.ownerName == i.winningTeam.ownerName){
+            if(high.ownerName == i.winningTeam.ownerName && low.ownerName == i.losingTeam.ownerName){
+                htmlOutput = htmlOutput.concat('<tr><td style="background-color:#EEF496">'+i.winningTeam.ownerName+'</td><td style="background-color:#EEF496"> '+i.winningTeam.points+'</td><td style="background-color:#784212;color:white;">'+i.losingTeam.ownerName+'</td><td style="background-color:#784212;color:white;">'+i.losingTeam.points+ '</td></tr>');
+            }
+            else if(high.ownerName == i.winningTeam.ownerName){
                 htmlOutput = htmlOutput.concat('<tr><td style="background-color:#EEF496">'+i.winningTeam.ownerName+'</td><td style="background-color:#EEF496"> '+i.winningTeam.points+'</td><td style="background-color:#FADBD8">'+i.losingTeam.ownerName+'</td><td style="background-color:#FADBD8">'+i.losingTeam.points+ '</td></tr>');
             }else{
                 htmlOutput = htmlOutput.concat('<tr><td style="background-color:#D5F5E3">'+i.winningTeam.ownerName+'</td><td style="background-color:#D5F5E3"> '+i.winningTeam.points+'</td><td style="background-color:#FADBD8">'+i.losingTeam.ownerName+'</td><td style="background-color:#FADBD8">'+i.losingTeam.points+ '</td></tr>');
