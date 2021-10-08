@@ -19,29 +19,31 @@ function getListOfPlayers(responseTeams){
     return listOfRosterEntries;   
 }
 
-function decideWinner(matchup, season, week){
+function processMatch(matchup, season){
     let match;
     if(matchup.winner == 'HOME'){
         match = {
-            winningTeam  : {teamId:matchup.home.teamId,ownerName:getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,win:1},
-            losingTeam : {teamId:matchup.away.teamId,ownerName:getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,win:0},
+            winningTeam  : {teamId:matchup.home.teamId,ownerName:getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,pointsByScoringPeriod:matchup.home.pointsByScoringPeriod,win:1},
+            losingTeam : {teamId:matchup.away.teamId,ownerName:getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,pointsByScoringPeriod:matchup.away.pointsByScoringPeriod,win:0},
             season:season,
-            week:week
+            week:matchup.matchupPeriodId, 
+            playoffTierType:matchup.playoffTierType
             }
     }else if(matchup.winner == "AWAY"){
         match = {
-            winningTeam : {teamId:matchup.away.teamId,ownerName:getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,win:1},
-            losingTeam : {teamId:matchup.home.teamId,ownerName:getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,win:0},
+            winningTeam : {teamId:matchup.away.teamId,ownerName:getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,pointsByScoringPeriod:matchup.away.pointsByScoringPeriod,win:1},
+            losingTeam : {teamId:matchup.home.teamId,ownerName:getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,pointsByScoringPeriod:matchup.home.pointsByScoringPeriod,win:0},
             season:season,
-            week:week
-        }
-    }
+            week:matchup.matchupPeriodId, 
+            playoffTierType:matchup.playoffTierType
+            }
+}
     return match;
 }
 
 function addHTMLBreak(numBreaks){
     let html = "";
-    if(numBreaks.length>0){ 
+    if(numBreaks!=null){ 
         for(let i = 0; i<numBreaks; i++){
             html = html.concat("<br> ")
         }
@@ -54,7 +56,7 @@ async function getPreviousSeasonMatchups(data){
     let previousMatchups = [];
     for(i of previousSeasons){
         let response = await axios.get(i.url);
-        previousMatchups = response.data[0].schedule.map(matchup => {return decideWinner(matchup, i.year);});
+        previousMatchups = response.data[0].schedule.map(matchup => {return processMatch(matchup, i.year);});
     }
     return previousMatchups;
     }
@@ -66,7 +68,53 @@ async function getAllSeasonMatchups(data){
 }
 
 async function getCurrentSeasonMatchups(data){
-    return data.schedule.filter(match => match.winner!="UNDECIDED").map(match=>decideWinner(match,settings.seasonId))
+    return data.schedule.filter(match => match.winner!="UNDECIDED").map(match=>processMatch(match,settings.seasonId))
+}
+async function getScores(matchups){
+    let teamResults = [];
+    for(i of matchups){
+        if(i.playoffTierType == "NONE" || i.playoffTierType == null){
+        teamResults.push({ownerName:i.winningTeam.ownerName, points:i.winningTeam.points, week:i.week, season:i.season});
+        teamResults.push({ownerName:i.losingTeam.ownerName, points:i.losingTeam.points, week:i.week, season:i.season});
+        }else{
+            for(let week in i.winningTeam.pointsByScoringPeriod){
+                teamResults.push({ownerName:i.winningTeam.ownerName, points:i.winningTeam.pointsByScoringPeriod[week], week:week, season:i.season});
+            }
+            for(let week in i.losingTeam.pointsByScoringPeriod){
+                teamResults.push({ownerName:i.losingTeam.ownerName, points:i.losingTeam.pointsByScoringPeriod[week], week:week, season:i.season});
+            }
+        }
+    }
+    return teamResults;
+}
+async function getHigh(results){
+    let highPoints = 0;
+    let highTeam;
+    for(i of results){
+        if(i.points>highPoints){
+            highPoints = i.points;
+            highTeam = i;
+        }
+    }
+    return highTeam;
+}
+async function getLow(results){
+    let lowPoints = 999;
+    let lowTeam;
+    for(i of results){
+        if(i.points<lowPoints){
+            lowPoints = i.points;
+            lowTeam = i;
+        }
+    }
+    return lowTeam;
+}
+async function getAverage(results){
+    let sum = 0;
+    for(i of results){
+        sum += i.points;
+    }
+    return Math.round((sum/results.length)*100)/100;
 }
 
 function createReport(){
@@ -76,18 +124,54 @@ function createReport(){
 function createReportBlock(title, report){
         return '<div style="text-align:center;font-family: Arial, Helvetica, sans-serif;"><h1>'+title+'</h1>'+report+'</div><br><br>';
     }    
-    
+function createParagraph(style){
+    return '<p style="'+style+'" >'
+}
+function endParagraph(){
+    return '</p>';
+}
+function createTable(params){
+    return '<table '+params+'>';
+}
+function endTable(){
+    return '</table>';
+}
+function createTableHeaders(listOfHeaders, params){
+    htmlOutput = "<tr>";
+    for(let i = 0; i<listOfHeaders.length; i++){
+        htmlOutput = htmlOutput + '<th '+params+'>'+listOfHeaders[i]+'</th>';
+    }
+    return htmlOutput = htmlOutput.concat("</tr>");
+}
+function createTableRow(listOfData, params){
+    htmlOutput = "<tr>";
+    for(let i = 0; i<listOfData.length; i++){
+        htmlOutput = htmlOutput + '<td '+params+'>'+listOfData[i]+'</td>';
+    }
+    return htmlOutput = htmlOutput.concat("</tr>");
+}
+
 function endReport(){
     return '</body></html>';
 }
+
 exports.getListOfPlayers = getListOfPlayers;
 exports.getOwnerNameByTeamID = getOwnerNameByTeamID;
-exports.decideWinner = decideWinner;
+exports.processMatch = processMatch;
 exports.addHTMLBreak = addHTMLBreak;
 exports.getPreviousSeasonMatchups = getPreviousSeasonMatchups;
 exports.getAllSeasonMatchups = getAllSeasonMatchups;
 exports.getCurrentSeasonMatchups = getCurrentSeasonMatchups;
+exports.getScores = getScores;
+exports.getHigh = getHigh;
+exports.getLow = getLow;
+exports.getAverage = getAverage;
 exports.createReport = createReport;
 exports.createReportBlock = createReportBlock;
+exports.createParagraph = createParagraph;
+exports.endParagraph = endParagraph;
+exports.createTable = createTable;
+exports.endTable = endTable;
+exports.createTableHeaders = createTableHeaders;
+exports.createTableRow = createTableRow;
 exports.endReport = endReport;
-    
