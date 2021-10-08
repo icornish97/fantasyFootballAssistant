@@ -2,8 +2,10 @@ let weekConfig = require('./weekConfig.js');
 let injuryReportGenerator = require('./injuryReport');
 let matchupHistory = require('./matchupHistory');
 let previousWeekRecap = require('./previousWeekRecap');
+let statistics = require('./statistics');
 let settings = require('./settings');
 let axios = require('axios');
+let utils = require('./utils');
 
 
 module.exports = async function initializeReport(){
@@ -16,20 +18,12 @@ module.exports = async function initializeReport(){
 }
 
 async function buildReport(data, week){
-    let htmlOutput=createReport();
-    htmlOutput = htmlOutput.concat(createReportBlock("Recap", await previousWeekRecap(data, week)));
-    htmlOutput = htmlOutput.concat(createReportBlock("Preview", await matchupHistory(data, week)));
-    htmlOutput = htmlOutput.concat(createReportBlock("Injury Report", await injuryReportGenerator(data.teams,week)));
-    htmlOutput = htmlOutput.concat(endReport());
+    let htmlOutput=utils.createReport();
+    htmlOutput = htmlOutput.concat(utils.createReportBlock("Recap", await previousWeekRecap(data, week)));
+    htmlOutput = htmlOutput.concat(utils.createReportBlock("Stats", await statistics(data, week)));
+    htmlOutput = htmlOutput.concat(utils.createReportBlock("Preview", await matchupHistory(data, week)));
+    htmlOutput = htmlOutput.concat(utils.createReportBlock("Injury Report", await injuryReportGenerator(data.teams,week)));
+    htmlOutput = htmlOutput.concat(utils.endReport());
     return htmlOutput;   
 }
 
-function createReport(){
-    return '<!DOCTYPE html><html><body>';
-}
-function createReportBlock(title, report){
-    return '<div style="text-align:center;font-family: Arial, Helvetica, sans-serif;"><h1>'+title+'</h1>'+report+'</div><br><br>';
-}
-function endReport(){
-    return '</body></html>';
-}
