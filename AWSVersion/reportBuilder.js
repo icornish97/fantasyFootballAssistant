@@ -9,7 +9,7 @@ let utils = require('./utils');
 
 
 module.exports = async function initializeReport(){
-    let week = weekConfig();
+    let week = weekConfig().scoringPeriod;
     let url = 'https://fantasy.espn.com/apis/v3/games/ffl/seasons/'+settings.seasonId+'/segments/0/leagues/'+settings.leagueId+'?view=mMatchup&view=mMatchupScore&scoringPeriodId='+week;
     return axios.get(url).then(async (res)=> 
         {      
