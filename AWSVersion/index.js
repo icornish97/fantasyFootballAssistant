@@ -4,5 +4,6 @@ let emailer = require('./emailer');
 
 
 exports.handler = function(){
-return reportBuilder().then(async (htmlOutput)=>{return emailer(htmlOutput, weekConfig()).catch(()=>(console.log(htmlOutput)));});
+    let week = weekConfig().scoringPeriod;
+    return reportBuilder().then(async (htmlOutput)=>{return emailer(htmlOutput, week).catch(()=>(console.log(htmlOutput)));});
 };
