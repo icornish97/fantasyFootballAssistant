@@ -34,13 +34,11 @@ today.setMonth(mm);
 today.setYear(yyyy);
 today.setHours(0,0,0,0);
 
-
 let scoringPeriods = getScoringPeriodsForSeason(settings.week1Start, settings.week1End);
 
 let inDateRange = todayDate => (element, index, array) => {
     return element.endDate >= todayDate && element.startDate<=todayDate;
 } 
 let CurrentScoringPeriod = scoringPeriods.filter(inDateRange(today));
-console.log(CurrentScoringPeriod);
-return CurrentScoringPeriod[0].scoringPeriod;
+return CurrentScoringPeriod[0];
 }
