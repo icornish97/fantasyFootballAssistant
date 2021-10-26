@@ -67,7 +67,25 @@ module.exports = async function generateInactiveReport(responseTeams, week){
     }
 
     async function getTeamsWithGame(week){
-        let url = "https://site.api.espn.com/apis/fantasy/v2/games/ffl/games?dates="+week.startDate.getFullYear() + '' + (week.startDate.getMonth()+1) + '' + week.startDate.getDate()+"-"+week.endDate.getFullYear() + '' + (week.endDate.getMonth()+1) + '' + (week.endDate.getDate()+1)+"&pbpOnly=true";
+        let startDate = week.startDate.getDate();
+        let endDate = week.endDate.getDate()+1;
+        let startMonth = week.startDate.getMonth()+1;
+        let endMonth = week.endDate.getMonth()+1;
+
+        if(startDate<=9){
+            startDate = '0'+startDate;
+        }
+        if(endDate<=9){
+            endDate='0'+ endDate;
+        }
+        if(startMonth<=9){
+            startMonth='0'+startMonth;
+        }
+        if(endMonth<=9){
+            endMonth='0'+endMonth;
+        }
+        
+        let url = "https://site.api.espn.com/apis/fantasy/v2/games/ffl/games?dates="+week.startDate.getFullYear() + '' + startMonth + '' + startDate+"-"+week.endDate.getFullYear() + '' + endMonth + '' +endDate+"&pbpOnly=true";
         let response = await axios.get(url);
         let teamsWithGame = [];
         for(let i = 0; i<response.data.events.length; i++){
