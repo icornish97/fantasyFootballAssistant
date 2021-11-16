@@ -26,7 +26,7 @@ async function summarize(matches, currentWeek){
     htmlOutput = htmlOutput.concat(utils.createTableRow(["Highest Points"], 'style="background-color:#F15C5C" colspan="4"') + utils.createTableHeaders(tableHeaders, 'style="font-weight: bold; background-color:#ddd"'));
 
     if(high.week == currentWeek-1 && high.season == settings.seasonId){
-        htmlOutput = htmlOutput.concat(utils.createTableRow([high.ownerName, high.points, high.week, high.season],'style="color:#f1e740"'));
+        htmlOutput = htmlOutput.concat(utils.createTableRow([high.ownerName, high.points, high.week, high.season],'style="background-color:#f1e740"'));
     }else{
         htmlOutput = htmlOutput.concat(utils.createTableRow([high.ownerName, high.points, high.week, high.season], ""));
     }
@@ -34,7 +34,7 @@ async function summarize(matches, currentWeek){
     htmlOutput = htmlOutput.concat(utils.createTableRow(["Lowest Points"], 'style="background-color:#96F4F0" colspan="4"') + utils.createTableHeaders(tableHeaders, 'style="font-weight: bold; background-color:#ddd"'));
 
     if(low.week == currentWeek-1 && low.season == settings.seasonId){
-        htmlOutput = htmlOutput.concat(utils.createTableRow([low.ownerName, low.points, low.week, low.season],'style="color:#f1e740"'));
+        htmlOutput = htmlOutput.concat(utils.createTableRow([low.ownerName, low.points, low.week, low.season],'style="background-color:#f1e740"'));
     }else{
         htmlOutput = htmlOutput.concat(utils.createTableRow([low.ownerName, low.points, low.week, low.season], ""));
     }
