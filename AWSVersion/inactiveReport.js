@@ -20,7 +20,6 @@ module.exports = async function generateInactiveReport(responseTeams, week){
                    onBye : !checkForGameThisWeek(entry, listOfTeamsWithGame)
                    };
         });
-        console.log(playersOnFantasyRosters);
         const getInactiveStartingPlayers = playersOnFantasyRosters.filter(player => (player.position != "Bench" && player.position != "IR" && player.injuryStatus != "ACTIVE"  && player.injuryStatus != undefined) || (player.position != "Bench" && player.onBye == true && player.injuryStatus != "INJURY_RESERVE"));
         const startingPlayersWithStatusByOwner = new Map([...groupBy(getInactiveStartingPlayers, player => player.ownerName).entries()].sort()); 
         var htmlOutput = '<style> #players { font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; margin-left:auto; margin-right:auto;} #players td, #players th { border: 1px }</style> <table id="players"> <tr> <td style="text-align: center;background-color: #04AA6D;color: white;" colspan = "3"><b>Week  ' + week.scoringPeriod + ' Injury Report</b></td> </tr> ';
