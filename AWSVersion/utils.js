@@ -5,6 +5,9 @@ let axios = require('axios');
 function getOwnerNameByTeamID(teamId){
     return settings.teamIdByOwner.find(team => team.teamId == teamId).teamOwner;
 }
+function getNFLTeamByProTeamId(proTeamId){
+    return settings.getNFLTeamByProTeamId.find(team=> team.proTeamId == proTeamId).teamName;
+}
 function getListOfPlayers(responseTeams){
     let teamRosters = [];
     for(let i of responseTeams){
@@ -27,7 +30,8 @@ function processMatch(matchup, season){
             losingTeam : {teamId:matchup.away.teamId,ownerName:getOwnerNameByTeamID(matchup.away.teamId),points:matchup.away.totalPoints,pointsByScoringPeriod:matchup.away.pointsByScoringPeriod,win:0},
             season:season,
             week:matchup.matchupPeriodId, 
-            playoffTierType:matchup.playoffTierType
+            playoffTierType:matchup.playoffTierType,
+            marginOfVictory:matchup.home.totalPoints-matchup.away.totalPoints
             }
     }else if(matchup.winner == "AWAY"){
         match = {
@@ -35,7 +39,8 @@ function processMatch(matchup, season){
             losingTeam : {teamId:matchup.home.teamId,ownerName:getOwnerNameByTeamID(matchup.home.teamId),points:matchup.home.totalPoints,pointsByScoringPeriod:matchup.home.pointsByScoringPeriod,win:0},
             season:season,
             week:matchup.matchupPeriodId, 
-            playoffTierType:matchup.playoffTierType
+            playoffTierType:matchup.playoffTierType,
+            marginOfVictory:matchup.away.totalPoints-matchup.home.totalPoints
             }
 }
     return match;
@@ -157,6 +162,7 @@ function endReport(){
 
 exports.getListOfPlayers = getListOfPlayers;
 exports.getOwnerNameByTeamID = getOwnerNameByTeamID;
+exports.getNFLTeamByProTeamId = getNFLTeamByProTeamId;
 exports.processMatch = processMatch;
 exports.addHTMLBreak = addHTMLBreak;
 exports.getPreviousSeasonMatchups = getPreviousSeasonMatchups;
