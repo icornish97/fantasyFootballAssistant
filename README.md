@@ -30,5 +30,5 @@ This report displays all players currently in starting lineups with an injury de
 ## Instructions 
 
 ### AWS Version
-
+Use cloudwatch event with the following cron as a trigger: cron(0 10 ? * TUE,THU,SUN *)
 ### Terminal Version
