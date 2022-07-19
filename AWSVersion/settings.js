@@ -1,7 +1,7 @@
 let leagueId = '72628823';
-let week1Start = new Date('September 7, 2021');
-let week1End = new Date('September 13, 2021');
-let seasonId = '2021';
+let week1Start = new Date('September 6, 2022');
+let week1End = new Date('September 12, 2022');
+let seasonId = '2022';
 let awsRegion = 'us-east-2';
 let reportToEmail = 'ian.cornish1@gmail.com';
 let reportFromEmail = 'ian.cornish1@gmail.com';
