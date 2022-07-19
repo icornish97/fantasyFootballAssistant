@@ -40,5 +40,6 @@ let inDateRange = todayDate => (element, index, array) => {
     return element.endDate >= todayDate && element.startDate<=todayDate;
 } 
 let CurrentScoringPeriod = scoringPeriods.filter(inDateRange(today));
-return CurrentScoringPeriod[0];
+return CurrentScoringPeriod[0] != undefined ? CurrentScoringPeriod[0] : scoringPeriods[0];
+
 }
