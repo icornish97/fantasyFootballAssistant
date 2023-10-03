@@ -3,7 +3,13 @@ let axios = require('axios');
 
 
 function getOwnerNameByTeamID(teamId){
-    return settings.teamIdByOwner.find(team => team.teamId == teamId).teamOwner;
+    return leagueMembers.find(team => team.id == teamId).ownerName;
+}
+function getOwnerNameByID(Id){
+    return settings.teamIdByOwner.find(team => team.id == Id).teamOwner;
+}
+function getIdByOwnerName(Name){
+    return leagueMembers.find(team => team.ownerName == Name).id;
 }
 function getNFLTeamByProTeamId(proTeamId){
     return settings.getNFLTeamByProTeamId.find(team=> team.proTeamId == proTeamId).teamName;
@@ -57,11 +63,16 @@ function addHTMLBreak(numBreaks){
 }
 
 async function getPreviousSeasonMatchups(data){
-    let previousSeasons = data.status.previousSeasons.map(season=>({year:season,url:'https://fantasy.espn.com/apis/v3/games/ffl/leagueHistory/'+settings.leagueId+'?scoringPeriodId=18&seasonId='+season+'&view=mMatchupScore&view=mScoreboard&view=mSettings&view=mTopPerformers&view=mTeam'}));
+    //IMPORTANT!!!!! LOOK AT PARAMETERS IN THIS API CALL, MAY BE ABLE TO GET ADITIONAL DATA
+    let previousSeasons = data.status.previousSeasons.map(season=>({year:season,url:'https://fantasy.espn.com/apis/v3/games/ffl/leagueHistory/'+settings.leagueId+'?scoringPeriodId=18&seasonId='+season+'&view=mMatchupScore&view&view=mScoreboard&view=mSettings&view=mTopPerformers&view=mTeam'}));
     let previousMatchups = [];
+    console.log('PREVIOUS SEASONS ' + previousSeasons);
     for(i of previousSeasons){
         let response = await axios.get(i.url);
-        previousMatchups = response.data[0].schedule.map(matchup => {return processMatch(matchup, i.year);});
+        let tempPreviousMatchups = response.data[0].schedule.map(matchup => {return processMatch(matchup, i.year);});
+        for(j of tempPreviousMatchups){
+            previousMatchups.push(j);
+        }
     }
     return previousMatchups;
     }
@@ -160,6 +171,22 @@ function endReport(){
     return '</body></html>';
 }
 
+function groupBy(collection, property) {
+    var i = 0, val, index,
+        values = [], result = [];
+    for (; i < collection.length; i++) {
+        val = collection[i][property];
+        index = values.indexOf(val);
+        if (index > -1)
+            result[index].push(collection[i]);
+        else {
+            values.push(val);
+            result.push([collection[i]]);
+        }
+    }
+    return result;
+}
+
 exports.getListOfPlayers = getListOfPlayers;
 exports.getOwnerNameByTeamID = getOwnerNameByTeamID;
 exports.getNFLTeamByProTeamId = getNFLTeamByProTeamId;
@@ -181,3 +208,6 @@ exports.endTable = endTable;
 exports.createTableHeaders = createTableHeaders;
 exports.createTableRow = createTableRow;
 exports.endReport = endReport;
+exports.getOwnerNameByID = getOwnerNameByID;
+exports.groupBy = groupBy;
+exports.getIdByOwnerName = getIdByOwnerName;
