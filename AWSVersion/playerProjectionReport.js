@@ -59,7 +59,7 @@ module.exports = async function playerProjectionReport(periodToRun){
             if(periodToRun=='preview'){
                 highLowTable = "<h1>Projected... Not All Stars</h1>"
             }else{
-                highLowTable = "<h1>Special Teams Unit</h1>"
+                highLowTable = "<h1>Not All Stars</h1>"
             }
         }
         highLowTable += utils.createTable(null);
