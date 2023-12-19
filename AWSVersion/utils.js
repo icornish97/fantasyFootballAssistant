@@ -1,14 +1,18 @@
+const { match } = require('assert');
 let settings = require('./settings');
 let axios = require('axios');
 
 
 function getOwnerNameByTeamID(teamId){
+    //this method has been refactored to use the global variables. 8/10/23
     return leagueMembers.find(team => team.id == teamId).ownerName;
 }
 function getOwnerNameByID(Id){
+    //This method is only used in the JSON intializer. Can probably be depricated.
     return settings.teamIdByOwner.find(team => team.id == Id).teamOwner;
 }
 function getIdByOwnerName(Name){
+    //this method has been refactored to use the global variables 8/10/23
     return leagueMembers.find(team => team.ownerName == Name).id;
 }
 function getNFLTeamByProTeamId(proTeamId){
@@ -66,7 +70,6 @@ async function getPreviousSeasonMatchups(data){
     //IMPORTANT!!!!! LOOK AT PARAMETERS IN THIS API CALL, MAY BE ABLE TO GET ADITIONAL DATA
     let previousSeasons = data.status.previousSeasons.map(season=>({year:season,url:'https://fantasy.espn.com/apis/v3/games/ffl/leagueHistory/'+settings.leagueId+'?scoringPeriodId=18&seasonId='+season+'&view=mMatchupScore&view&view=mScoreboard&view=mSettings&view=mTopPerformers&view=mTeam'}));
     let previousMatchups = [];
-    console.log('PREVIOUS SEASONS ' + previousSeasons);
     for(i of previousSeasons){
         let response = await axios.get(i.url);
         let tempPreviousMatchups = response.data[0].schedule.map(matchup => {return processMatch(matchup, i.year);});
@@ -82,18 +85,22 @@ async function getAllSeasonMatchups(data){
     let currentYearMatchups = await getCurrentSeasonMatchups(data);
     return previousMatchups.concat(currentYearMatchups);
 }
-
+async function getPlayerById(id){
+    return rosteredPlayersByPlayerId.get(id);
+}
 async function getCurrentSeasonMatchups(data){
     return data.schedule.filter(match => match.winner!="UNDECIDED").map(match=>processMatch(match,settings.seasonId))
 }
 async function getScores(matchups){
     let teamResults = [];
     for(i of matchups){
+        if(i != undefined){
         if(i.playoffTierType == "NONE" || i.playoffTierType == null){
         teamResults.push({ownerName:i.winningTeam.ownerName, points:i.winningTeam.points, week:i.week, season:i.season});
         teamResults.push({ownerName:i.losingTeam.ownerName, points:i.losingTeam.points, week:i.week, season:i.season});
         }else{
             for(let week in i.winningTeam.pointsByScoringPeriod){
+                console.log('Week log ' + JSON.stringify(i));
                 teamResults.push({ownerName:i.winningTeam.ownerName, points:i.winningTeam.pointsByScoringPeriod[week], week:week, season:i.season});
             }
             for(let week in i.losingTeam.pointsByScoringPeriod){
@@ -101,6 +108,8 @@ async function getScores(matchups){
             }
         }
     }
+    }
+
     return teamResults;
 }
 async function getHigh(results){
@@ -138,7 +147,7 @@ function createReport(){
     }
 
 function createReportBlock(title, report){
-        return '<div style="text-align:center;font-family: Arial, Helvetica, sans-serif;"><h1>'+title+'</h1>'+report+'</div><br><br>';
+        return '<div style="text-align:center;font-family: Arial, sans-serif;"><h1>'+title+'</h1>'+report+'</div><br><br>';
     }    
 function createParagraph(style){
     return '<p style="'+style+'" >'
@@ -187,6 +196,30 @@ function groupBy(collection, property) {
     return result;
 }
 
+function getPositionNameByDefaultID(id){
+    switch(id){
+        case 1:
+            return 'Quarterback';
+            break;
+        case 2: 
+            return 'Running Back';
+            break;
+        case 3:
+            return 'Wide Reciever';
+            break; 
+        case 4:
+            return 'Tight End';
+            break;
+        case 5:
+            return 'Kicker';
+            break;
+        case 16:
+            return 'D/ST';
+            break;
+        default:
+            return null;
+    }
+}
 exports.getListOfPlayers = getListOfPlayers;
 exports.getOwnerNameByTeamID = getOwnerNameByTeamID;
 exports.getNFLTeamByProTeamId = getNFLTeamByProTeamId;
@@ -211,3 +244,5 @@ exports.endReport = endReport;
 exports.getOwnerNameByID = getOwnerNameByID;
 exports.groupBy = groupBy;
 exports.getIdByOwnerName = getIdByOwnerName;
+exports.getPositionNameByDefaultID = getPositionNameByDefaultID;
+exports.getPlayerById = getPlayerById;
